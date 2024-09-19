@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tealeg/xlsx"
+	"github.com/tealeg/xlsx/v3"
 )
 
 func generateExcelReport(stockDataToday []Stock, salesDataToday []Sales, stockDataYesterday []Stock, salesDataYesterday []Sales) (string, error) {
@@ -52,7 +52,6 @@ func addStockRows(sheet *xlsx.Sheet, stockData []Stock) {
 	headerStyle := xlsx.NewStyle()
 	headerStyle.Font.Bold = true
 	headerStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	headerStyle.ApplyBorder = true
 	headerStyle.Alignment.Horizontal = "center"
 
 	for _, h := range header {
@@ -63,11 +62,9 @@ func addStockRows(sheet *xlsx.Sheet, stockData []Stock) {
 
 	rowStyle := xlsx.NewStyle()
 	rowStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	rowStyle.ApplyBorder = true
 
 	rowCenterStyle := xlsx.NewStyle()
 	rowCenterStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	rowCenterStyle.ApplyBorder = true
 	headerStyle.Alignment.Horizontal = "center"
 
 	for i, stock := range stockData {
@@ -91,19 +88,8 @@ func addStockRows(sheet *xlsx.Sheet, stockData []Stock) {
 		stockInHandCell.SetStyle(rowStyle)
 	}
 
-	maxLengths := make([]int, len(header))
-	for _, row := range sheet.Rows {
-		for colIdx, cell := range row.Cells {
-			length := len(cell.String())
-			if length > maxLengths[colIdx] {
-				maxLengths[colIdx] = length
-			}
-		}
-	}
-
-	for i, length := range maxLengths {
-		// Add extra space for padding
-		sheet.Col(i).Width = float64(length + 2)
+	for colIdx := 1; colIdx <= sheet.MaxCol; colIdx++ {
+		sheet.SetColAutoWidth(colIdx, xlsx.DefaultAutoWidth)
 	}
 }
 
@@ -113,7 +99,6 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 	headerStyle := xlsx.NewStyle()
 	headerStyle.Font.Bold = true
 	headerStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	headerStyle.ApplyBorder = true
 	headerStyle.Alignment.Horizontal = "center"
 
 	for _, h := range header {
@@ -124,11 +109,9 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 
 	rowStyle := xlsx.NewStyle()
 	rowStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	rowStyle.ApplyBorder = true
 
 	rowCenterStyle := xlsx.NewStyle()
 	rowCenterStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	rowCenterStyle.ApplyBorder = true
 	headerStyle.Alignment.Horizontal = "center"
 
 	var grandTotal float64
@@ -193,7 +176,6 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 	boldStyle.Font.Bold = true
 	boldStyle.Alignment.Horizontal = "center"
 	boldStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	boldStyle.ApplyBorder = true
 	grandTotalLabelCell.SetStyle(boldStyle)
 
 	grandTotalCell := totalRow.AddCell()
@@ -204,20 +186,9 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 	numberStyle.Font.Bold = true
 	numberStyle.Alignment.Horizontal = "right"
 	numberStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
-	numberStyle.ApplyBorder = true
 	grandTotalCell.SetStyle(numberStyle)
 
-	maxLengths := make([]int, len(header))
-	for _, row := range sheet.Rows {
-		for colIdx, cell := range row.Cells {
-			length := len(cell.String())
-			if length > maxLengths[colIdx] {
-				maxLengths[colIdx] = length
-			}
-		}
-	}
-
-	for i, length := range maxLengths {
-		sheet.Col(i).Width = float64(length + 2)
+	for colIdx := 1; colIdx <= sheet.MaxCol; colIdx++ {
+		sheet.SetColAutoWidth(colIdx, xlsx.DefaultAutoWidth)
 	}
 }
