@@ -178,6 +178,11 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 	boldStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
 	grandTotalLabelCell.SetStyle(boldStyle)
 
+	for colIdx := 1; colIdx < sheet.MaxCol - 1; colIdx++ {
+		hideCell := totalRow.AddCell()
+		hideCell.SetStyle(rowStyle)
+	}
+
 	grandTotalCell := totalRow.AddCell()
 	grandTotalCell.SetFloat(grandTotal)
 	grandTotalCell.NumFmt = "#,##0"
