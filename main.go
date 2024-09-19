@@ -17,7 +17,15 @@ func main() {
 	sendEmailTo := os.Getenv("SEND_EMAIL_TO")
 
 	today := time.Now().Format("2006-01-02")
-	yesterday := time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+	weekday := time.Now().Weekday()
+
+	var yesterday string
+	if weekday == time.Monday {
+		// If today is Monday, set yesterday to Saturday
+		yesterday = time.Now().AddDate(0, 0, -2).Format("2006-01-02")
+	} else {
+		yesterday = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
+	}
 
 	stockDataYesterday, err := fetchStockReport(yesterday)
 	if err != nil {
