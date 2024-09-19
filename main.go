@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -45,12 +46,16 @@ func main() {
 	}
 
 	// Send the report via Gmail
-	email := sendEmailTo
+	emails := strings.Split(sendEmailTo, ",")
 	subject := "Laporan Stok dan Penjualan per " + time.Now().Format("2 Jan 2006")
 	body := "Terlampir " + subject
-	err = sendEmailWithGmail(email, subject, body, excelFile)
-	if err != nil {
-		log.Fatalf("Failed to send email: %v", err)
+	for _, email := range emails {
+		err := sendEmailWithGmail(strings.TrimSpace(email), subject, body, excelFile)
+		if err != nil {
+			log.Printf("Failed to send email to %s: %v", email, err)
+		} else {
+			log.Printf("Email sent to %s", email)
+		}
 	}
 
 	log.Println("Report sent successfully")
