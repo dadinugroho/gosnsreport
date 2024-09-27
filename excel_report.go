@@ -7,10 +7,7 @@ import (
 	"github.com/tealeg/xlsx/v3"
 )
 
-func generateExcelReport(stockDataToday []Stock, salesDataToday []Sales, stockDataYesterday []Stock, salesDataYesterday []Sales) (string, error) {
-	today := time.Now().Format("2-Jan-06")
-	yesterday := time.Now().AddDate(0, 0, -1).Format("2-Jan-06")
-
+func generateExcelReport(stockDataToday []Stock, salesDataToday []Sales, stockDataYesterday []Stock, salesDataYesterday []Sales, today string, yesterday string) (string, error) {
 	file := xlsx.NewFile()
 
 	stockSheetToday, err := file.AddSheet("Stok " + today)
@@ -178,7 +175,7 @@ func addSalesRows(sheet *xlsx.Sheet, salesData []Sales) {
 	boldStyle.Border = *xlsx.NewBorder("thin", "thin", "thin", "thin")
 	grandTotalLabelCell.SetStyle(boldStyle)
 
-	for colIdx := 1; colIdx < sheet.MaxCol - 1; colIdx++ {
+	for colIdx := 1; colIdx < sheet.MaxCol-1; colIdx++ {
 		hideCell := totalRow.AddCell()
 		hideCell.SetStyle(rowStyle)
 	}
